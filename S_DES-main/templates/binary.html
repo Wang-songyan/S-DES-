@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>S-DES 加密与解密</title>
+    <style>
+        body {
+            font-family: 'Nunito', 'Roboto', sans-serif;
+            background: url('{{ url_for('static', filename='background.jpg') }}') no-repeat center center fixed;
+            background-size: cover;
+            background-color: rgba(255, 255, 255, 0.3);
+            color: #333;
+            margin: 0;
+            padding: 0;
+            font-size: 17px;
+        }
+        nav {
+            background-color: #2e867f;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            padding-left: 60px;
+        }
+        nav .brand {
+            color: white;
+            font-size: 1.5rem;
+            margin-right: 30px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            margin-left: 15px;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .main {
+            padding: 2rem;
+            margin-top: 70px;
+        }
+        .card {
+            background-color: rgba(255, 255, 255);
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            margin: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            max-width: 350px;
+        }
+        .card h4 {
+            margin-bottom: 1rem;
+        }
+        .btn {
+            background-color: #2e867f;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 110%;
+            text-align: center;
+        }
+        .btn:hover {
+            background-color: #2c6f6d;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        input[type="text"]:focus {
+            border-color: #2e867f;
+            outline: none;
+        }
+        .output {
+            border: none;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255);
+            border-radius: 5px;
+            color: black;
+            width: 100%;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1050;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .modal-content {
+        background-color: white;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #dee2e6;
+    width: 300px;
+    text-align: center; /* 确保内容水平居中 */
+    border-radius: 0.5rem;
+    position: relative; /* 为绝对定位的元素提供参考 */
+    display: flex; /* 使用flexbox布局 */
+    flex-direction: column; /* 元素垂直排列 */
+    align-items: center; /* 水平居中对齐 */
+}
+        .close {
+            cursor: pointer;
+            padding: 5px 10px; /* 调整内边距 */
+        }
+        .form-row {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="brand">S_DES</div>
+        <div>
+            <a href="/main">关于我们</a>
+            <a href="/binary">二进制</a>
+            <a href="/">字符串</a>
+        </div>
+    </nav>
+
+    <div class="modal" id="errorModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h5>输入错误</h5>
+            <p id="errorMessage"></p>
+            <button class="btn" onclick="closeModal()">关闭</button>
+        </div>
+    </div>
+
+    <main class="main">
+        <section>
+            <div class="container">
+                <div class="form-row">
+                    <div class="card">
+                        <h4>使用 S-DES 加密（输入二进制）</h4>
+                        <form id="encrypt-binary-form">
+                            <div class="form-group">
+                                <label for="plaintext-bin-encrypt">明文（二进制）：</label>
+                                <input type="text" class="form-control" id="plaintext-bin-encrypt" name="plaintext_bin" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="key-encrypt-binary">密钥（10 位）：</label>
+                                <input type="text" class="form-control" id="key-encrypt-binary" name="key" maxlength="10" required>
+                            </div>
+                            <button type="submit" class="btn">加密</button>
+                            <h5>密文（二进制）：</h5>
+                            <p id="ciphertext-binary-output" class="output"></p>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h4>使用 S-DES 解密（输入二进制）</h4>
+                        <form id="decrypt-binary-form">
+                            <div class="form-group">
+                                <label for="ciphertext-bin-decrypt">密文（二进制）：</label>
+                                <input type="text" class="form-control" id="ciphertext-bin-decrypt" name="ciphertext_bin" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="key-decrypt-binary">密钥（10 位）：</label>
+                                <input type="text" class="form-control" id="key-decrypt-binary" name="key" maxlength="10" required>
+                            </div>
+                            <button type="submit" class="btn">解密</button>
+                            <h5>解密明文（二进制）：</h5>
+                            <p id="decrypted-plaintext-binary-output" class="output"></p>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h4>查找可能的密钥（输入二进制）</h4>
+                        <form id="brute-force-binary-form">
+                            <div class="form-group">
+                                <label for="brute-force-plaintext-bin">明文（二进制）：</label>
+                                <input type="text" class="form-control" id="brute-force-plaintext-bin" name="plaintext_bin" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="brute-force-ciphertext-bin">密文（二进制）：</label>
+                                <input type="text" class="form-control" id="brute-force-ciphertext-bin" name="ciphertext_bin" required>
+                            </div>
+                            <button type="submit" class="btn">查找可能的密钥</button>
+                            <h5>可能的密钥：</h5>
+                            <ul id="keys-list-binary"></ul>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.min.js') }}"></script>
+
+<script>
+     // 关闭弹窗
+        function closeModal() {
+            document.getElementById('errorModal').style.display = 'none';
+        }
+
+        // 显示弹窗
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('errorModal').style.display = 'block';
+        }
+    // 获取表单元素和输出元素
+    const encryptBinaryForm = document.getElementById('encrypt-binary-form');
+    const plaintextBinInput = document.getElementById('plaintext-bin-encrypt');
+    const keyInputBinary = document.getElementById('key-encrypt-binary');
+    const ciphertextBinaryOutput = document.getElementById('ciphertext-binary-output');
+
+    // 监听表单提交事件
+    encryptBinaryForm.addEventListener('submit', function (e) {
+        e.preventDefault(); // 阻止默认的表单提交行为
+
+        // 获取明文的二进制表示和密钥
+        const plaintextBin = plaintextBinInput.value;
+        const keyBinary = keyInputBinary.value;
+
+        // 输入验证
+        if (plaintextBin.length !== 8 || !/^[01]+$/.test(plaintextBin)) {
+            document.getElementById('errorMessage').textContent = "明文应为8位二进制字符串。";
+            $('#errorModal').modal('show');
+            return;
+        }
+        if (keyBinary.length !== 10 || !/^[01]+$/.test(keyBinary)) {
+            document.getElementById('errorMessage').textContent = "密钥应为10位二进制字符串。";
+            $('#errorModal').modal('show');
+            return;
+        }
+
+        // 发送 AJAX 请求到加密路由
+        fetch('/encrypt_binary', {
+            method: 'POST',
+            body: new URLSearchParams({ plaintext_bin: plaintextBin, key: keyBinary }), // 将数据作为表单数据发送
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                // 显示加密后的密文的二进制表示
+                ciphertextBinaryOutput.textContent = data.ciphertext_bin;
+            })
+            .catch((error) => {
+                console.error('错误:', error);
+            });
+    });
+
+</script>
+
+<script>
+    // 使用jQuery的方式监听表单提交事件
+    $("#decrypt-binary-form").submit(function (event) {
+        event.preventDefault(); // 阻止表单默认提交行为
+
+        // 获取密文的二进制表示和密钥
+        var ciphertextBin = $("#ciphertext-bin-decrypt").val();
+        var keyBinary = $("#key-decrypt-binary").val();
+
+        // 输入验证
+        if (ciphertextBin.length !== 8 || !/^[01]+$/.test(ciphertextBin)) {
+            document.getElementById('errorMessage').textContent = "密文应为8位二进制字符串。";
+            $('#errorModal').modal('show');
+            return;
+        }
+        if (keyBinary.length !== 10 || !/^[01]+$/.test(keyBinary)) {
+            document.getElementById('errorMessage').textContent = "密钥应为10位二进制字符串。";
+            $('#errorModal').modal('show');
+            return;
+        }
+
+        // 发送POST请求到服务器解密密文
+        $.post("/decrypt_binary", { ciphertext_bin: ciphertextBin, key: keyBinary }, function (data) {
+            // 显示解密后的明文的二进制表示
+            $("#decrypted-plaintext-binary-output").text(data.plaintext_bin);
+        });
+    });
+</script>
+
+<script>
+    // 使用jQuery的方式监听暴力破解表单提交事件
+    $("#brute-force-binary-form").submit(function (event) {
+        event.preventDefault(); // 阻止表单默认提交行为
+
+        // 获取明文和密文的二进制表示
+        var plaintextBin = $("#brute-force-plaintext-bin").val();
+        var ciphertextBin = $("#brute-force-ciphertext-bin").val();
+
+        // 输入验证
+        if (plaintextBin.length !== 8 || !/^[01]+$/.test(plaintextBin)) {
+            document.getElementById('errorMessage').textContent = "明文应为8位二进制字符串。";
+            $('#errorModal').modal('show');
+            return;
+        }
+        if (ciphertextBin.length !== 8 || !/^[01]+$/.test(ciphertextBin)) {
+            document.getElementById('errorMessage').textContent = "密文应为8位二进制字符串。";
+            $('#errorModal').modal('show');
+            return;
+        }
+
+        // 发送POST请求到服务器进行暴力破解
+        $.post("/brute_force_binary", { plaintext_bin: plaintextBin, ciphertext_bin: ciphertextBin }, function (data) {
+            // 显示可能的密钥列表
+            var keysListBinary = $("#keys-list-binary");
+            keysListBinary.empty(); // 清空列表
+            if (data.keys.length === 0) {
+                keysListBinary.append("<li>未找到可能的密钥。</li>");
+            } else {
+                data.keys.forEach(function (key) {
+                    keysListBinary.append("<li>" + key + "</li>");
+                });
+            }
+
+            // 显示耗时
+            keysListBinary.append("<li>耗时: " + data.time + "</li>");
+        });
+    });
+</script>
+
+
+</body>
+</html>
+
