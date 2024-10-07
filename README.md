@@ -55,13 +55,19 @@
 ![image](https://github.com/Wang-songyan/S-DES-/blob/main/image/image021.png)
 
 问题2：
-密钥1：0101110001
-明文：10101100
-得到密文：01111111
+密钥1：0101110001  
+
+明文：10101100  
+
+得到密文：01111111  
+
 ![image](https://github.com/Wang-songyan/S-DES-/blob/main/image/image023.png)
-密钥2：1000010110
-明文：10101100
-得到密文：01111111
+密钥2：1000010110  
+
+明文：10101100  
+
+得到密文：01111111  
+
 ![image](https://github.com/Wang-songyan/S-DES-/blob/main/image/image025.png)
 可以发现，使用不同的密钥，可能会得到相同的密文。
 # S-DES加解密工具开发手册
@@ -74,8 +80,9 @@
 2. 安装依赖
 3. 启动应用程序
 4. 前端页面设计
-   - 4.1 字符串输入页面 (string.html)
-   - 4.2 二进制输入页面 (binary.html)
+   - 4.1 开始页面 (main.html)
+   - 4.2 字符串输入页面 (string.html)
+   - 4.3 二进制输入页面 (binary.html)
 5. 加解密算法
    - 5.1 算法简介
    - 5.2 参数设置
@@ -88,6 +95,7 @@
    - 6.2 使用暴力破解功能
      - 6.2.1 暴力破解字符串密钥
      - 6.2.2 暴力破解二进制密钥
+     - 6.2.3. 加入时间戳
    - 6.3 安全注意事项
 7. 用户指南
    - 7.1 字符串输入模式
@@ -122,15 +130,28 @@ pip install Flask
 python app.py
 ```
 
-应用程序将在本地启动一个Flask服务器，并在默认端口（通常为5000）上运行。您可以通过访问 `http://localhost:5000/` 在浏览器中打开应用程序的主页。
+应用程序将在本地启动一个Flask服务器，并在默认端口main（通常为5000）上运行。您可以通过访问 `http://localhost:5000/` 在浏览器中打开应用程序的主页。
 
 ## 4. 前端页面设计
 
-### 4.1. 字符串输入页面 (string.html)
+### 4.1. 开始页面 (main.html)
+```html
+<main class="main">
+        <div class="container">
+            <h1 style="font-size: 3rem;">关于我们</h1>
+            <h2>课程名称: 信息安全导论</h2>
+            <h3>指导教师: 向宏</h3>
+            <h3>项目成员：李晨雨、王松妍</h3>
+            <h2>算法简介:</h2>
+            <h3>S-DES（简单数据加密标准）是一种对称密钥加密算法, 它是对DES（数据加密标准）的简化版本。</h3>
+        </div>
+    </main>
+```
+### 4.2. 字符串输入页面 (string.html)
 
 这个页面允许用户输入字符串明文和10位二进制密钥，然后执行S-DES加密和解密操作。以下是页面中的一些关键元素和功能的原始代码：
 
-#### 4.1.1. 表单提交加密请求
+#### 4.2.1. 表单提交加密请求
 
 ```html
 <form id="encrypt-form" action="/encrypt_string" method="POST">
@@ -142,7 +163,7 @@ python app.py
 </form>
 ```
 
-#### 4.1.2. 表单提交解密请求（使用jQuery）
+#### 4.2.2. 表单提交解密请求（使用jQuery）
 
 ```html
 <form id="decrypt-form">
@@ -154,7 +175,7 @@ python app.py
 </form>
 ```
 
-#### 4.1.3. 表单提交暴力破解请求（使用jQuery）
+#### 4.2.3. 表单提交暴力破解请求（使用jQuery）
 
 ```html
 <form id="brute-force-form">
@@ -166,11 +187,11 @@ python app.py
 </form>
 ```
 
-### 4.2. 二进制输入页面 (binary.html)
+### 4.3. 二进制输入页面 (binary.html)
 
 这个页面允许用户输入二进制明文和密钥，然后执行S-DES加密和解密操作。以下是页面中的一些关键元素和功能的原始代码：
 
-#### 4.2.1. 表单提交加密请求
+#### 4.3.1. 表单提交加密请求
 
 ```html
 <form id="encrypt-binary-form">
@@ -182,7 +203,7 @@ python app.py
 </form>
 ```
 
-#### 4.2.2. 表单提交解密请求（使用jQuery）
+#### 4.3.2. 表单提交解密请求（使用jQuery）
 
 ```html
 <form id="decrypt-binary-form">
@@ -194,7 +215,7 @@ python app.py
 </form>
 ```
 
-#### 4.2.3. 表单提交暴力破解请求（使用jQuery）
+#### 4.3.3. 表单提交暴力破解请求（使用jQuery）
 
 ```html
 <form id="brute-force-binary-form">
@@ -376,6 +397,13 @@ def brute_force_binary():
 
 在上述代码中，`plaintext_bin` 和 `ciphertext_bin` 分别是已知的二进制明文和密文。`brute_force_decrypt_binary` 函数将尝试所有可能的二进制密钥，找到匹配的密钥，并将其返回。
 
+#### 6.2.3. 加入时间戳
+```python
+# 记录结束时间并计算耗时
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"暴力破解耗时: {elapsed_time:.2f} 秒")  # 打印暴力破解耗时
+```
 ### 6.3. 安全注意事项
 
 请注意，暴力破解是一种计算密集型操作，特别是对于10位密钥。因此，可能需要相当长的时间来完成暴力破解。此外，使用暴力破解时，需要确保已知的明文和密文对是准确的，否则可能无法找到正确的密钥。
