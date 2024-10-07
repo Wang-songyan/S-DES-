@@ -1,33 +1,42 @@
 # 程序测试结果
 
 ## 开始界面 
-显示课程即相关项目简介，以及本项目的制作人：李晨雨，王松妍
+显示课程即相关项目简介，以及本项目的制作人：李晨雨，王松妍  
+
 ![image](https://github.com/Wang-songyan/S-DES-/blob/main/image/image000.png)
 
 ## 第1关：基本测试
 
 根据S-DES算法编写和调试程序，提供GUI解密支持用户交互。输入可以是8bit的数据和10bit的密钥，输出是8bit的密文。
 
-二进制交互界面：
+二进制交互界面：  
+
 ![image](https://github.com/Wang-songyan/S-DES-/blob/main/image/image001.png)
 
-明文输入格式错误提示：
+明文输入格式错误提示：  
+
 ![image](https://github.com/Wang-songyan/S-DES-/blob/main/image/image003.png)
 
-密钥输入格式错误提示：
-![image](https://github.com/Wang-songyan/S-DES-/blob/main/image/image005.png)
+密钥输入格式错误提示：  
+
+![image](https://github.com/Wang-songyan/S-DES-/blob/main/image/image005.png)  
+
 ## 第2关：交叉测试
 
-本组二进制明文加密结果。
+本组二进制明文加密结果。  
+
 ![image](https://github.com/Wang-songyan/S-DES-/blob/main/image/image007.png)
 
-交叉测试组二进制明文加密结果。
+交叉测试组二进制明文加密结果。  
+
 ![image](https://github.com/Wang-songyan/S-DES-/blob/main/image/image009.png)
 
-本组二进制明文解密结果。
-![image](https://github.com/Wang-songyan/S-DES-/blob/main/image/image011.png)
+本组二进制明文解密结果。  
 
-交叉测试组二进制明文解密结果。
+![image](https://github.com/Wang-songyan/S-DES-/blob/main/image/image011.png)
+  
+交叉测试组二进制明文解密结果。  
+
 ![image](https://github.com/Wang-songyan/S-DES-/blob/main/image/image013.png)
 
 经交叉验证结果一致。
@@ -36,7 +45,8 @@
 
 考虑到向实用性扩展，加密算法的数据输入可以是ASCII编码字符串(分组为1 Byte)，对应地输出也可以是ASCII字符串(很可能是乱码)。
 
-字符串交互界面
+字符串交互界面  
+
 ![image](https://github.com/Wang-songyan/S-DES-/blob/main/image/image015.png)
 
 ## 第4关：暴力破解
