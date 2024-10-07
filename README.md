@@ -1,5 +1,9 @@
 # 程序测试结果
 
+## 开始界面 
+显示课程即相关项目简介，以及本项目的制作人：李晨雨，王松妍
+![image](https://github.com/Wang-songyan/S-DES-/blob/main/image/image000.png)
+
 ## 第1关：基本测试
 
 根据S-DES算法编写和调试程序，提供GUI解密支持用户交互。输入可以是8bit的数据和10bit的密钥，输出是8bit的密文。
