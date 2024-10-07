@@ -8,65 +8,62 @@
 
 根据S-DES算法编写和调试程序，提供GUI解密支持用户交互。输入可以是8bit的数据和10bit的密钥，输出是8bit的密文。
 
-二进制交互界面
-![273377380-67233e87-850e-4482-9994-5fcca8626355](https://github.com/Stripepuppy/S_DES/assets/133982775/a34bc31e-77a6-4bb4-a5ea-fe4c9a6cecea)
+二进制交互界面：
+![image](https://github.com/Wang-songyan/S-DES-/blob/main/image/image001.png)
 
-明文、密文输入格式错误提示。
-![273376676-339c4f18-13c4-4d76-a336-c8b949fdd2ee](https://github.com/Stripepuppy/S_DES/assets/133982775/1ca76ba5-a573-4d00-a0a7-9271bd1638a5)
+明文输入格式错误提示：
+![image](https://github.com/Wang-songyan/S-DES-/blob/main/image/image003.png)
 
-密钥输入格式错误提示。
-![273376564-db1cfe8c-146f-4a8f-b546-934d6510d3e8](https://github.com/Stripepuppy/S_DES/assets/133982775/646bbccd-122e-4924-a128-b4543cbb3848)
-
+密钥输入格式错误提示：
+![image](https://github.com/Wang-songyan/S-DES-/blob/main/image/image005.png)
 ## 第2关：交叉测试
 
 本组二进制明文加密结果。
-![273377769-3d5b6afa-16f1-4d43-aea6-2ba31aa67e4a](https://github.com/Stripepuppy/S_DES/assets/133982775/a429b80f-c6a2-49dd-84ce-756995599a9c)
+![image](https://github.com/Wang-songyan/S-DES-/blob/main/image/image007.png)
 
 交叉测试组二进制明文加密结果。
-<img width="300" alt="273377241-ae60deaf-a928-4567-825b-c255248d8db5" src="https://github.com/Stripepuppy/S_DES/assets/133982775/f02674a6-1596-4298-b89d-05a36033dd3b">
+![image](https://github.com/Wang-songyan/S-DES-/blob/main/image/image009.png)
 
-本组字符串明文加密结果。
-![273377863-1dcaf6fa-16a2-43d5-9ba0-8486972561df](https://github.com/Stripepuppy/S_DES/assets/133982775/fde6d666-651c-4d79-a0f7-63b0121753f4)
+本组二进制明文解密结果。
+![image](https://github.com/Wang-songyan/S-DES-/blob/main/image/image011.png)
 
-交叉验证组字符串加密结果。
-<img width="297" alt="273377286-f142a77a-6c5e-4655-9c82-0e0222d9ba96" src="https://github.com/Stripepuppy/S_DES/assets/133982775/17b44724-5250-4dc9-9500-f638dbedbf65">
+交叉测试组二进制明文解密结果。
+![image](https://github.com/Wang-songyan/S-DES-/blob/main/image/image013.png)
+经交叉验证结果一致。
 
 ## 第3关：扩展功能
 
 考虑到向实用性扩展，加密算法的数据输入可以是ASCII编码字符串(分组为1 Byte)，对应地输出也可以是ASCII字符串(很可能是乱码)。
 
 字符串交互界面
-![273376628-388fa005-e30d-4bde-8246-ce2f7f755f43](https://github.com/Stripepuppy/S_DES/assets/133982775/b4acdc52-20d3-43bd-b58c-28d04f226f10)
+![image](https://github.com/Wang-songyan/S-DES-/blob/main/image/image015.png)
 
 ## 第4关：暴力破解
 
 使用相同密钥的明、密文对(一个或多个)，可使用暴力破解的方法找到正确的密钥Key。
 
-一对密文和密钥。
-![273378083-31c4812e-d9f0-4373-a163-59e8afb9b676](https://github.com/Stripepuppy/S_DES/assets/133982775/46a9a935-b947-472b-8a62-a6aa5384f975)
+二进制：
+![image](https://github.com/Wang-songyan/S-DES-/blob/main/image/image017.png)
 
-多对密文和密钥。（在后台进行测试）
-明文：[00001111, 00010000, 00010001] 密文：[10101101, 00100001, 10011001] 密钥：0001000111
-<img width="512" alt="image" src="https://github.com/Stripepuppy/S_DES/assets/133982775/0239bc69-4ef8-4882-92d5-df57abba9a38">
+字符串：
+![image](https://github.com/Wang-songyan/S-DES-/blob/main/image/image019.png)
 
 ## 第5关：封闭测试
 
-根据第4关的结果，进一步分析，随机选择的一个明密文对，有不止一个密钥Key
-![273378358-a7fe0004-5986-41c6-be9b-fcbe478705f9](https://github.com/Stripepuppy/S_DES/assets/133982775/f49423b3-fb01-4d30-b972-b64f6b3ff557)
+问题1：
+由暴力破解查找所有可能的密钥，可以发现，对于随机选择的一个明密文对结果不止一个密钥。
+![image](https://github.com/Wang-songyan/S-DES-/blob/main/image/image021.png)
 
-在进一步的分析中，我们发现：对于不同的10位密钥，只要生成的两个子密钥Km和Kn是相同的，那么使用这两个密钥加密相同的明文将产生相同的密文。
-
-具体来说，我们比较了以下五对密钥生成的子密钥：
-
-1. 1000101010 和 1100101010
-2. 1111110011 和 1011110011
-3. 1000000010 和 1100000010
-4. 0011100000 和 0111100000
-5. 0010101101 和 0110101101
-
-总结：当两个10位密钥只有在第2位上存在差异，而其他位都相同时，它们会生成相同的子密钥。这个现象引发了我们对S-DES算法的进一步思考，尤其是子密钥生成的过程。这种情况可能会导致一些安全性问题，因此在使用S-DES时需要格外小心，并确保密钥的随机性和安全性以避免潜在的风险。
-
-
+问题2：
+密钥1：0101110001
+明文：10101100
+得到密文：01111111
+![image](https://github.com/Wang-songyan/S-DES-/blob/main/image/image023.png)
+密钥2：1000010110
+明文：10101100
+得到密文：01111111
+![image](https://github.com/Wang-songyan/S-DES-/blob/main/image/image025.png)
+可以发现，使用不同的密钥，可能会得到相同的密文。
 # S-DES加解密工具开发手册
 
 本开发手册旨在帮助您了解和使用S-DES（Simplified Data Encryption Standard）加解密算法的Flask应用程序，以及使用暴力破解方式找到可能的密钥。下面是关于如何使用这个应用程序的详细说明。
